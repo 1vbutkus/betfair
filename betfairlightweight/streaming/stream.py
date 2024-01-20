@@ -188,6 +188,13 @@ class OrderStream(BaseStream):
     _lookup = "oc"
     _name = "OrderStream"
 
+    def on_subscribe(self, data: dict) -> None:
+        if (data.get('ct', '') == "SUB_IMAGE"):
+            # print(" --- Cleaned cache in OrderStream ---")
+            # sito reikia, nes kai nebera orderiu, tai prisijungus markto info nebesiuncia. Gali buti kadten nebera orderiu,bet jei nebus isvalyta, tai masysis, kad yra.
+            self._caches = {}
+        return super().on_subscribe(data=data)
+
     def _process(self, data: list, publish_time: int) -> bool:
         caches, img = [], False
         for order_book in data:
